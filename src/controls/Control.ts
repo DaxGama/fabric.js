@@ -106,6 +106,9 @@ export class Control {
    */
   sizeY = 0;
 
+  fillX = false;
+  fillY = false;
+
   /**
    * Sets the length of the touch area of the control. If null, defaults to object's touchCornerSize.
    * Expects both touchSizeX and touchSizeY to be set when set.
@@ -314,14 +317,14 @@ export class Control {
     centerX: number,
     centerY: number,
     isTouch: boolean,
-    fabricObject: InteractiveFabricObject
+    obj: InteractiveFabricObject
   ) {
     const t = multiplyTransformMatrixArray([
       createTranslateMatrix(centerX, centerY),
       createRotateMatrix({ angle }),
       createScaleMatrix(
-        (isTouch ? this.touchSizeX : this.sizeX) || objectCornerSize,
-        (isTouch ? this.touchSizeY : this.sizeY) || objectCornerSize
+        (isTouch ? this.touchSizeX : (this.fillX ? obj.getScaledWidth() : this.sizeX)) || objectCornerSize,
+        (isTouch ? this.touchSizeY : (this.fillY ? obj.getScaledHeight() : this.sizeY)) || objectCornerSize
       ),
     ]);
     return {

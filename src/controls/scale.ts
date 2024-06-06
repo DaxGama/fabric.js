@@ -36,6 +36,7 @@ export function scaleIsProportional(
   eventData: TPointerEvent,
   fabricObject: FabricObject
 ): boolean {
+  if (fabricObject.lockUniScaling) return true;
   const canvas = fabricObject.canvas as Canvas,
     uniformIsToggled = eventData[canvas.uniScaleKey!];
   return (
@@ -101,8 +102,8 @@ export const scaleCursorStyleHandler: ControlCursorCallback = (
       control.x !== 0 && control.y === 0
         ? 'x'
         : control.x === 0 && control.y !== 0
-        ? 'y'
-        : '';
+          ? 'y'
+          : '';
   if (scalingIsForbidden(fabricObject, by, scaleProportionally)) {
     return NOT_ALLOWED_CURSOR;
   }
@@ -122,7 +123,7 @@ export const scaleCursorStyleHandler: ControlCursorCallback = (
  * @return {Boolean} true if some change happened
  * @private
  */
-function scaleObject(
+export function scaleObject(
   eventData: TPointerEvent,
   transform: ScaleTransform,
   x: number,
@@ -138,6 +139,13 @@ function scaleObject(
   if (forbidScaling) {
     return false;
   }
+
+  if (target.canvas?.snapPointFn && !target.angle) {
+    const snapped = target.canvas.snapPointFn([x, y]);
+    x = snapped[0];
+    y = snapped[1];
+  }
+
   if (transform.gestureScale) {
     scaleX = transform.scaleX * transform.gestureScale;
     scaleY = transform.scaleY * transform.gestureScale;
@@ -174,14 +182,19 @@ function scaleObject(
     // missing detection of flip and logic to switch the origin
     if (scaleProportionally && !by) {
       // uniform scaling
-      const distance = Math.abs(newPoint.x) + Math.abs(newPoint.y),
-        { original } = transform,
-        originalDistance =
-          Math.abs((dim.x * original.scaleX) / target.scaleX) +
-          Math.abs((dim.y * original.scaleY) / target.scaleY),
-        scale = distance / originalDistance;
-      scaleX = original.scaleX * scale;
-      scaleY = original.scaleY * scale;
+      // const distance = Math.abs(newPoint.x) + Math.abs(newPoint.y),
+      //   { original } = transform,
+      //   originalDistance =
+      //     Math.abs((dim.x * original.scaleX) / target.scaleX) +
+      //     Math.abs((dim.y * original.scaleY) / target.scaleY),
+      //   scale = distance / originalDistance;
+      // scaleX = original.scaleX * scale;
+      // scaleY = original.scaleY * scale;
+      scaleX = Math.abs(newPoint.x * target.scaleX / dim.x) / transform.original.scaleX;
+      scaleY = Math.abs(newPoint.y * target.scaleY / dim.y) / transform.original.scaleY;
+      const scale = Math.max(scaleX, scaleY);
+      scaleX = transform.original.scaleX * scale;
+      scaleY = transform.original.scaleY * scale;
     } else {
       scaleX = Math.abs((newPoint.x * target.scaleX) / dim.x);
       scaleY = Math.abs((newPoint.y * target.scaleY) / dim.y);
@@ -191,29 +204,43 @@ function scaleObject(
       scaleX *= 2;
       scaleY *= 2;
     }
-    if (transform.signX !== signX && by !== 'y') {
+    if (signX && transform.signX !== signX && by !== 'y') {
       transform.originX = invertOrigin(transform.originX);
+      transform.originX2 = invertOrigin(transform.originX2);
       scaleX *= -1;
       transform.signX = signX;
     }
-    if (transform.signY !== signY && by !== 'x') {
+    if (signY && transform.signY !== signY && by !== 'x') {
       transform.originY = invertOrigin(transform.originY);
+      transform.originY2 = invertOrigin(transform.originY2);
       scaleY *= -1;
       transform.signY = signY;
     }
   }
   // minScale is taken care of in the setter.
-  const oldScaleX = target.scaleX,
-    oldScaleY = target.scaleY;
+  // const oldScaleX = target.scaleX,
+  //   oldScaleY = target.scaleY;
+  let changeX = false, changeY = false;
+
   if (!by) {
-    !isLocked(target, 'lockScalingX') && target.set('scaleX', scaleX);
-    !isLocked(target, 'lockScalingY') && target.set('scaleY', scaleY);
+    if (!isLocked(target, 'lockScalingX')) changeX = true;
+    if (!isLocked(target, 'lockScalingY')) changeY = true;
   } else {
     // forbidden cases already handled on top here.
-    by === 'x' && target.set('scaleX', scaleX);
-    by === 'y' && target.set('scaleY', scaleY);
+    if (by === 'x') changeX = true;
+    if (by === 'y') changeY = true;
   }
-  return oldScaleX !== target.scaleX || oldScaleY !== target.scaleY;
+
+  if ((target as any)._objects) {
+    if (changeX) target.set({ _scaleX: scaleX });
+    if (changeY) target.set({ _scaleY: scaleY });
+  } else {
+    if (changeX) target.set({ scaleX: Math.sign(scaleX), width: Math.round(Math.abs(target.width * scaleX) || 1) });
+    if (changeY) target.set({ scaleY: Math.sign(scaleY), height: Math.round(Math.abs(target.height * scaleY) || 1) });
+  }
+
+  // return oldScaleX !== target.scaleX || oldScaleY !== target.scaleY;
+  return changeX || changeY;
 }
 
 /**

@@ -134,8 +134,7 @@ import { isActiveSelection } from '../util/typeAssertions';
  */
 export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
   extends StaticCanvas<EventSpec>
-  implements Omit<CanvasOptions, 'enablePointerEvents'>
-{
+  implements Omit<CanvasOptions, 'enablePointerEvents'> {
   declare _objects: FabricObject[];
 
   // transform config
@@ -347,8 +346,8 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
     const activeObject = this._activeObject;
     return !this.preserveObjectStacking && activeObject
       ? this._objects
-          .filter((object) => !object.group && object !== activeObject)
-          .concat(activeObject)
+        .filter((object) => !object.group && object !== activeObject)
+        .concat(activeObject)
       : this._objects;
   }
 
@@ -580,11 +579,11 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
   ): void {
     const pointer = target.group
       ? // transform pointer to target's containing coordinate plane
-        sendPointToPlane(
-          this.getScenePoint(e),
-          undefined,
-          target.group.calcTransformMatrix()
-        )
+      sendPointToPlane(
+        this.getScenePoint(e),
+        undefined,
+        target.group.calcTransformMatrix()
+      )
       : this.getScenePoint(e);
     const { key: corner = '', control } = target.getActiveControl() || {},
       actionHandler =
@@ -596,6 +595,7 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
       origin = this._shouldCenterTransform(target, action, altKey)
         ? ({ x: CENTER, y: CENTER } as const)
         : this._getOriginFromCorner(target, corner),
+      centerPoint = target.getCenterPoint(),
       /**
        * relative to target's containing coordinate plane
        * both agree on every point
@@ -628,6 +628,10 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
           originX: origin.x,
           originY: origin.y,
         },
+        originX2: origin.x,
+        originY2: origin.y,
+        constraintCenter: target.translateToOriginPoint(centerPoint, 'center', 'center'),
+        constraintCorner: target.translateToOriginPoint(centerPoint, origin.x, origin.y),
       };
 
     this._currentTransform = transform;
@@ -971,9 +975,9 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
       boundsWidth === 0 || boundsHeight === 0
         ? new Point(1, 1)
         : new Point(
-            upperCanvasEl.width / boundsWidth,
-            upperCanvasEl.height / boundsHeight
-          );
+          upperCanvasEl.width / boundsWidth,
+          upperCanvasEl.height / boundsHeight
+        );
 
     return pointer.multiply(cssScale);
   }
@@ -1045,8 +1049,8 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
     return isActiveSelection(active)
       ? active.getObjects()
       : active
-      ? [active]
-      : [];
+        ? [active]
+        : [];
   }
 
   /**

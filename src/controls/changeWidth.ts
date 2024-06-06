@@ -40,6 +40,9 @@ export const changeObjectWidth: TransformActionHandler = (
       newWidth = Math.ceil(
         Math.abs((localPoint.x * multiplier) / target.scaleX) - strokePadding
       );
+
+    if ((target as any).autoWidth) (target as any).autoWidth = false;
+
     target.set('width', Math.max(newWidth, 0));
     //  check against actual target width in case `newWidth` was rejected
     return oldWidth !== target.width;

@@ -43,7 +43,7 @@ import type { FitContentLayout } from '../LayoutManager';
  */
 class NoopLayoutManager extends LayoutManager {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  performLayout() {}
+  performLayout() { }
 }
 
 export interface GroupEvents extends ObjectEvents, CollectionEvents {
@@ -58,7 +58,7 @@ export interface GroupOwnProps {
 
 export interface SerializedGroupProps
   extends SerializedObjectProps,
-    GroupOwnProps {
+  GroupOwnProps {
   objects: SerializedObjectProps[];
   layoutManager: SerializedLayoutManager;
 }
@@ -83,8 +83,7 @@ export class Group
   extends createCollectionMixin(
     FabricObject<GroupProps, SerializedGroupProps, GroupEvents>
   )
-  implements GroupProps
-{
+  implements GroupProps {
   /**
    * Used to optimize performance
    * set to `false` if you don't need contained objects to be targets of events
@@ -281,12 +280,37 @@ export class Group
    */
   _set(key: string, value: any) {
     const prev = this[key as keyof this];
+
+    if (key === '_scaleX') {
+      (this._objects || []).forEach((object) => {
+        object._set('width', object.width * value);
+        object._set('left', object.left * value);
+      });
+
+      super._set('width', this.width * value);
+
+      return this;
+    }
+
+    if (key === '_scaleY') {
+      (this._objects || []).forEach((object) => {
+        object._set('height', object.height * value);
+        object._set('top', object.top * value);
+      });
+
+      super._set('height', this.height * value);
+
+      return this;
+    }
+
     super._set(key, value);
+
     if (key === 'canvas' && prev !== value) {
       (this._objects || []).forEach((object) => {
         object._set(key, value);
       });
     }
+
     return this;
   }
 
@@ -632,9 +656,9 @@ export class Group
    */
   getSvgStyles(): string {
     const opacity =
-        typeof this.opacity !== 'undefined' && this.opacity !== 1
-          ? `opacity: ${this.opacity};`
-          : '',
+      typeof this.opacity !== 'undefined' && this.opacity !== 1
+        ? `opacity: ${this.opacity};`
+        : '',
       visibility = this.visible ? '' : ' visibility: hidden;';
     return [opacity, this.getSvgFilter(), visibility].join('');
   }

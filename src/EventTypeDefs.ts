@@ -66,6 +66,8 @@ export type Transform = {
   offsetY: number;
   originX: TOriginX;
   originY: TOriginY;
+  originX2: TOriginX;
+  originY2: TOriginY;
   ex: number;
   ey: number;
   lastX: number;
@@ -80,6 +82,8 @@ export type Transform = {
     originY: TOriginY;
   };
   actionPerformed: boolean;
+  constraintCenter: Point;
+  constraintCorner: Point;
 };
 
 export interface TEvent<E extends Event = TPointerEvent> {
@@ -235,10 +239,9 @@ type BeforeSuffix<T extends string> = `${T}:before`;
 type WithBeforeSuffix<T extends string> = T | BeforeSuffix<T>;
 
 type TPointerEvents<Prefix extends string> = Record<
-  `${Prefix}${
-    | WithBeforeSuffix<'down'>
-    | WithBeforeSuffix<'move'>
-    | 'dblclick'}`,
+  `${Prefix}${| WithBeforeSuffix<'down'>
+  | WithBeforeSuffix<'move'>
+  | 'dblclick'}`,
   TPointerEventInfo
 > &
   Record<
@@ -270,9 +273,9 @@ export interface MiscEvents {
 
 export interface ObjectEvents
   extends ObjectPointerEvents,
-    DnDEvents,
-    MiscEvents,
-    ObjectModificationEvents {
+  DnDEvents,
+  MiscEvents,
+  ObjectModificationEvents {
   // selection
   selected: Partial<TEvent> & {
     target: FabricObject;
@@ -302,11 +305,11 @@ export interface StaticCanvasEvents extends CollectionEvents {
 
 export interface CanvasEvents
   extends StaticCanvasEvents,
-    CanvasPointerEvents,
-    CanvasDnDEvents,
-    MiscEvents,
-    CanvasModificationEvents,
-    CanvasSelectionEvents {
+  CanvasPointerEvents,
+  CanvasDnDEvents,
+  MiscEvents,
+  CanvasModificationEvents,
+  CanvasSelectionEvents {
   // brushes
   'before:path:created': { path: FabricObject };
   'path:created': { path: FabricObject };
@@ -314,16 +317,16 @@ export interface CanvasEvents
   // erasing
   'erasing:start': never;
   'erasing:end':
-    | never
-    | {
-        path: FabricObject;
-        targets: FabricObject[];
-        subTargets: FabricObject[];
-        drawables: {
-          backgroundImage?: FabricObject;
-          overlayImage?: FabricObject;
-        };
-      };
+  | never
+  | {
+    path: FabricObject;
+    targets: FabricObject[];
+    subTargets: FabricObject[];
+    drawables: {
+      backgroundImage?: FabricObject;
+      overlayImage?: FabricObject;
+    };
+  };
 
   // IText
   'text:selection:changed': { target: IText };

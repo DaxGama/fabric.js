@@ -9,38 +9,49 @@ import {
   scalingYOrSkewingX,
 } from './scaleSkew';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const renderNone = () => { };
+
 // use this function if you want to generate new controls for every instance
 export const createObjectDefaultControls = () => ({
   ml: new Control({
     x: -0.5,
     y: 0,
+    fillY: true,
     cursorStyleHandler: scaleSkewCursorStyleHandler,
     actionHandler: scalingXOrSkewingY,
     getActionName: scaleOrSkewActionName,
+    render: renderNone,
   }),
 
   mr: new Control({
     x: 0.5,
     y: 0,
+    fillY: true,
     cursorStyleHandler: scaleSkewCursorStyleHandler,
     actionHandler: scalingXOrSkewingY,
     getActionName: scaleOrSkewActionName,
+    render: renderNone,
   }),
 
   mb: new Control({
     x: 0,
     y: 0.5,
+    fillX: true,
     cursorStyleHandler: scaleSkewCursorStyleHandler,
     actionHandler: scalingYOrSkewingX,
     getActionName: scaleOrSkewActionName,
+    render: renderNone,
   }),
 
   mt: new Control({
     x: 0,
     y: -0.5,
+    fillX: true,
     cursorStyleHandler: scaleSkewCursorStyleHandler,
     actionHandler: scalingYOrSkewingX,
     getActionName: scaleOrSkewActionName,
+    render: renderNone,
   }),
 
   tl: new Control({

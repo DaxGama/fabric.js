@@ -18,9 +18,9 @@ export interface ActiveSelectionOptions extends GroupProps {
 }
 
 const activeSelectionDefaultValues: Partial<TClassProperties<ActiveSelection>> =
-  {
-    multiSelectionStacking: 'canvas-stacking',
-  };
+{
+  multiSelectionStacking: 'canvas-stacking',
+};
 
 /**
  * Used by Canvas to manage selection.
@@ -98,7 +98,7 @@ export class ActiveSelection extends Group {
         const insertAt =
           index === -1
             ? //  `target` is in front of all other objects
-              this.size()
+            this.size()
             : index;
         this.insertAt(insertAt, target);
       });
@@ -237,7 +237,9 @@ export class ActiveSelection extends Group {
   ) {
     ctx.save();
     ctx.globalAlpha = this.isMoving ? this.borderOpacityWhenMoving : 1;
-    super._renderControls(ctx, styleOverride);
+
+    // super._renderControls(ctx, styleOverride);
+    // moved child rendering ahead to draw them under selection border
     const options = {
       hasControls: false,
       ...childrenOverride,
@@ -246,6 +248,9 @@ export class ActiveSelection extends Group {
     for (let i = 0; i < this._objects.length; i++) {
       this._objects[i]._renderControls(ctx, options);
     }
+
+    super._renderControls(ctx, styleOverride);
+
     ctx.restore();
   }
 }

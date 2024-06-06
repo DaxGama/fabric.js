@@ -9,6 +9,7 @@ export {
   scalingEqually,
   scalingX,
   scalingY,
+  scaleObject,
 } from './scale';
 export {
   scaleOrSkewActionName,
@@ -20,3 +21,5 @@ export { skewCursorStyleHandler, skewHandlerX, skewHandlerY } from './skew';
 export { getLocalPoint } from './util';
 export { wrapWithFireEvent } from './wrapWithFireEvent';
 export { wrapWithFixedAnchor } from './wrapWithFixedAnchor';
+export { isLocked, commonEventInfo } from './util';
+export { fireEvent } from './fireEvent';
