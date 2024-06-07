@@ -1,3 +1,4 @@
+import type { FabricObject } from '../../fabric';
 import type { ModifierKey, TOptionalModifierKey } from '../EventTypeDefs';
 import type { TOptions } from '../typedefs';
 import type { StaticCanvasOptions } from './StaticCanvasOptions';
@@ -65,6 +66,9 @@ export interface CanvasTransformOptions {
    * @default
    */
   altActionKey: TOptionalModifierKey;
+
+  snapPointFn?: (point: [number, number]) => [number, number];
+  snapObjectFn?: (object: FabricObject, diff: [number, number]) => [number, number];
 }
 
 export interface CanvasSelectionOptions {
@@ -237,11 +241,11 @@ export interface CanvasEventsOptions {
 
 export interface CanvasOptions
   extends StaticCanvasOptions,
-    CanvasTransformOptions,
-    CanvasSelectionOptions,
-    CanvasCursorOptions,
-    TargetFindOptions,
-    CanvasEventsOptions {
+  CanvasTransformOptions,
+  CanvasSelectionOptions,
+  CanvasCursorOptions,
+  TargetFindOptions,
+  CanvasEventsOptions {
   /**
    * Default element class that's given to wrapper (div) element of canvas
    * @type String

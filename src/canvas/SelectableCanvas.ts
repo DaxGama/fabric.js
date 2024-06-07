@@ -144,6 +144,8 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
   declare centeredRotation: boolean;
   declare centeredKey: TOptionalModifierKey;
   declare altActionKey: TOptionalModifierKey;
+  declare snapPointFn?: (point: [number, number]) => [number, number];
+  declare snapObjectFn?: (object: FabricObject, diff: [number, number]) => [number, number];
 
   // selection config
   declare selection: boolean;

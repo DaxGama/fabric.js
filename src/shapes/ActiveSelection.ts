@@ -238,7 +238,6 @@ export class ActiveSelection extends Group {
     ctx.save();
     ctx.globalAlpha = this.isMoving ? this.borderOpacityWhenMoving : 1;
 
-    // super._renderControls(ctx, styleOverride);
     // moved child rendering ahead to draw them under selection border
     const options = {
       hasControls: false,
