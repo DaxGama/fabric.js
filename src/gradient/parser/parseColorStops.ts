@@ -16,7 +16,7 @@ function parseColorStop(el: SVGStopElement, multiplier: number) {
       keyValuePairs.pop();
     }
 
-    for (let i = keyValuePairs.length; i--; ) {
+    for (let i = keyValuePairs.length; i--;) {
       const [key, value] = keyValuePairs[i]
         .split(RE_KEY_VALUE)
         .map((s) => s.trim());
@@ -29,7 +29,7 @@ function parseColorStop(el: SVGStopElement, multiplier: number) {
   }
 
   const color = new Color(
-    colorValue || el.getAttribute('stop-color') || 'rgb(0,0,0)'
+    colorValue || el.getAttribute('stop-color') || '#000000FF'
   );
 
   return {
@@ -49,7 +49,7 @@ export function parseColorStops(
   const colorStops: ColorStop[] = [],
     colorStopEls = el.getElementsByTagName('stop'),
     multiplier = parsePercent(opacityAttr, 1);
-  for (let i = colorStopEls.length; i--; ) {
+  for (let i = colorStopEls.length; i--;) {
     colorStops.push(parseColorStop(colorStopEls[i], multiplier));
   }
   return colorStops;

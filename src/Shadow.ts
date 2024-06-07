@@ -33,15 +33,15 @@ const shadowOffsetRegex = '(-?\\d+(?:\\.\\d*)?(?:px)?(?:\\s?|$))?';
 
 const reOffsetsAndBlur = new RegExp(
   '(?:\\s|^)' +
-    shadowOffsetRegex +
-    shadowOffsetRegex +
-    '(' +
-    reNum +
-    '?(?:px)?)?(?:\\s?|$)(?:$|\\s)'
+  shadowOffsetRegex +
+  shadowOffsetRegex +
+  '(' +
+  reNum +
+  '?(?:px)?)?(?:\\s?|$)(?:$|\\s)'
 );
 
 export const shadowDefaultValues: Partial<TClassProperties<Shadow>> = {
-  color: 'rgb(0,0,0)',
+  color: '#000000FF',
   blur: 0,
   offsetX: 0,
   offsetY: 0,
@@ -144,7 +144,7 @@ export class Shadow {
       [, offsetX = 0, offsetY = 0, blur = 0] = (
         reOffsetsAndBlur.exec(shadowStr) || []
       ).map((value) => parseFloat(value) || 0),
-      color = (shadowStr.replace(reOffsetsAndBlur, '') || 'rgb(0,0,0)').trim();
+      color = (shadowStr.replace(reOffsetsAndBlur, '') || '#000000FF').trim();
 
     return {
       color,
@@ -170,9 +170,9 @@ export class Shadow {
    */
   toSVG(object: FabricObject) {
     const offset = rotateVector(
-        new Point(this.offsetX, this.offsetY),
-        degreesToRadians(-object.angle)
-      ),
+      new Point(this.offsetX, this.offsetY),
+      degreesToRadians(-object.angle)
+    ),
       BLUR_BOX = 20,
       color = new Color(this.color);
     let fBoxX = 40,
@@ -186,14 +186,14 @@ export class Shadow {
           (Math.abs(offset.x) + this.blur) / object.width,
           config.NUM_FRACTION_DIGITS
         ) *
-          100 +
+        100 +
         BLUR_BOX;
       fBoxY =
         toFixed(
           (Math.abs(offset.y) + this.blur) / object.height,
           config.NUM_FRACTION_DIGITS
         ) *
-          100 +
+        100 +
         BLUR_BOX;
     }
     if (object.flipX) {
@@ -203,20 +203,18 @@ export class Shadow {
       offset.y *= -1;
     }
 
-    return `<filter id="SVGID_${this.id}" y="-${fBoxY}%" height="${
-      100 + 2 * fBoxY
-    }%" x="-${fBoxX}%" width="${
-      100 + 2 * fBoxX
-    }%" >\n\t<feGaussianBlur in="SourceAlpha" stdDeviation="${toFixed(
-      this.blur ? this.blur / 2 : 0,
-      config.NUM_FRACTION_DIGITS
-    )}"></feGaussianBlur>\n\t<feOffset dx="${toFixed(
-      offset.x,
-      config.NUM_FRACTION_DIGITS
-    )}" dy="${toFixed(
-      offset.y,
-      config.NUM_FRACTION_DIGITS
-    )}" result="oBlur" ></feOffset>\n\t<feFlood flood-color="${color.toRgb()}" flood-opacity="${color.getAlpha()}"/>\n\t<feComposite in2="oBlur" operator="in" />\n\t<feMerge>\n\t\t<feMergeNode></feMergeNode>\n\t\t<feMergeNode in="SourceGraphic"></feMergeNode>\n\t</feMerge>\n</filter>\n`;
+    return `<filter id="SVGID_${this.id}" y="-${fBoxY}%" height="${100 + 2 * fBoxY
+      }%" x="-${fBoxX}%" width="${100 + 2 * fBoxX
+      }%" >\n\t<feGaussianBlur in="SourceAlpha" stdDeviation="${toFixed(
+        this.blur ? this.blur / 2 : 0,
+        config.NUM_FRACTION_DIGITS
+      )}"></feGaussianBlur>\n\t<feOffset dx="${toFixed(
+        offset.x,
+        config.NUM_FRACTION_DIGITS
+      )}" dy="${toFixed(
+        offset.y,
+        config.NUM_FRACTION_DIGITS
+      )}" result="oBlur" ></feOffset>\n\t<feFlood flood-color="${color.toRgb()}" flood-opacity="${color.getAlpha()}"/>\n\t<feComposite in2="oBlur" operator="in" />\n\t<feMerge>\n\t\t<feMergeNode></feMergeNode>\n\t\t<feMergeNode in="SourceGraphic"></feMergeNode>\n\t</feMerge>\n</filter>\n`;
   }
 
   /**

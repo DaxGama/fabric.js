@@ -128,13 +128,12 @@ type toDataURLOptions = ObjectToCanvasElementOptions & {
  * @fires drop
  */
 export class FabricObject<
-    Props extends TOptions<ObjectProps> = Partial<ObjectProps>,
-    SProps extends SerializedObjectProps = SerializedObjectProps,
-    EventSpec extends ObjectEvents = ObjectEvents
-  >
+  Props extends TOptions<ObjectProps> = Partial<ObjectProps>,
+  SProps extends SerializedObjectProps = SerializedObjectProps,
+  EventSpec extends ObjectEvents = ObjectEvents
+>
   extends AnimatableObject<EventSpec>
-  implements ObjectProps
-{
+  implements ObjectProps {
   declare minScaleLimit: number;
 
   declare opacity: number;
@@ -545,10 +544,10 @@ export class FabricObject<
       clipPathData =
         this.clipPath && !this.clipPath.excludeFromExport
           ? {
-              ...this.clipPath.toObject(propertiesToInclude),
-              inverted: this.clipPath.inverted,
-              absolutePositioned: this.clipPath.absolutePositioned,
-            }
+            ...this.clipPath.toObject(propertiesToInclude),
+            inverted: this.clipPath.inverted,
+            absolutePositioned: this.clipPath.absolutePositioned,
+          }
           : null,
       object = {
         ...pick(this, propertiesToInclude as (keyof this)[]),
@@ -1112,7 +1111,7 @@ export class FabricObject<
   _setClippingProperties(ctx: CanvasRenderingContext2D) {
     ctx.globalAlpha = 1;
     ctx.strokeStyle = 'transparent';
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#000000FF';
   }
 
   /**

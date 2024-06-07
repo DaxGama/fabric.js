@@ -61,7 +61,7 @@ export const fabricObjectDefaultValues: Partial<
   padding: 0,
   opacity: 1,
   paintFirst: 'fill',
-  fill: 'rgb(0,0,0)',
+  fill: '#000000FF',
   fillRule: 'nonzero',
   stroke: null,
   strokeDashArray: null,
