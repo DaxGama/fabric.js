@@ -21,12 +21,12 @@ export function createCollectionMixin<TBase extends Constructor>(Base: TBase) {
     _objects: FabricObject[] = [];
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _onObjectAdded(object: FabricObject) {
+    _onObjectAdded(object: FabricObject, index: number) {
       // subclasses should override this method
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _onObjectRemoved(object: FabricObject) {
+    _onObjectRemoved(object: FabricObject, index: number) {
       // subclasses should override this method
     }
 
@@ -42,8 +42,9 @@ export function createCollectionMixin<TBase extends Constructor>(Base: TBase) {
      * @returns {number} new array length
      */
     add(...objects: FabricObject[]): number {
+      const from = this._objects.length
       const size = this._objects.push(...objects);
-      objects.forEach((object) => this._onObjectAdded(object));
+      objects.forEach((object, index) => this._onObjectAdded(object, from + index));
       return size;
     }
 
@@ -55,7 +56,7 @@ export function createCollectionMixin<TBase extends Constructor>(Base: TBase) {
      */
     insertAt(index: number, ...objects: FabricObject[]) {
       this._objects.splice(index, 0, ...objects);
-      objects.forEach((object) => this._onObjectAdded(object));
+      objects.forEach((object) => this._onObjectAdded(object, index));
       return this._objects.length;
     }
 
@@ -74,7 +75,7 @@ export function createCollectionMixin<TBase extends Constructor>(Base: TBase) {
         if (index !== -1) {
           array.splice(index, 1);
           removed.push(object);
-          this._onObjectRemoved(object);
+          this._onObjectRemoved(object, index);
         }
       });
       return removed;

@@ -51,13 +51,13 @@ import { getDevicePixelRatio } from '../env';
  */
 export type TCanvasSizeOptions =
   | {
-      backstoreOnly?: true;
-      cssOnly?: false;
-    }
+    backstoreOnly?: true;
+    cssOnly?: false;
+  }
   | {
-      backstoreOnly?: false;
-      cssOnly?: true;
-    };
+    backstoreOnly?: false;
+    cssOnly?: true;
+  };
 
 export type TSVGExportOptions = {
   suppressPreamble?: boolean;
@@ -84,11 +84,10 @@ export type TSVGExportOptions = {
  */
 // TODO: fix `EventSpec` inheritance https://github.com/microsoft/TypeScript/issues/26154#issuecomment-1366616260
 export class StaticCanvas<
-    EventSpec extends StaticCanvasEvents = StaticCanvasEvents
-  >
+  EventSpec extends StaticCanvasEvents = StaticCanvasEvents
+>
   extends createCollectionMixin(CommonMethods<CanvasEvents>)
-  implements StaticCanvasOptions
-{
+  implements StaticCanvasOptions {
   declare width: number;
   declare height: number;
 
@@ -224,25 +223,28 @@ export class StaticCanvas<
     return removed;
   }
 
-  _onObjectAdded(obj: FabricObject) {
+  _nextId = 0;
+
+  _onObjectAdded(obj: FabricObject, index: number) {
     if (obj.canvas && (obj.canvas as StaticCanvas) !== this) {
       log(
         'warn',
         'Canvas is trying to add an object that belongs to a different canvas.\n' +
-          'Resulting to default behavior: removing object from previous canvas and adding to new canvas'
+        'Resulting to default behavior: removing object from previous canvas and adding to new canvas'
       );
       obj.canvas.remove(obj);
     }
+    obj.id = this._nextId++;
     obj._set('canvas', this);
     obj.setCoords();
-    this.fire('object:added', { target: obj });
-    obj.fire('added', { target: this });
+    this.fire('object:added', { target: obj, index });
+    obj.fire('added', { target: this, index });
   }
 
-  _onObjectRemoved(obj: FabricObject) {
+  _onObjectRemoved(obj: FabricObject, index: number) {
     obj._set('canvas', undefined);
-    this.fire('object:removed', { target: obj });
-    obj.fire('removed', { target: this });
+    this.fire('object:removed', { target: obj, index });
+    obj.fire('removed', { target: this, index });
   }
 
   _onStackOrderChanged() {
@@ -1234,18 +1236,14 @@ export class StaticCanvas<
           ? matrixToSVG(invertTransform(this.viewportTransform))
           : '';
       markup.push(
-        `<rect transform="${additionalTransform} translate(${finalWidth / 2},${
-          finalHeight / 2
-        })" x="${filler.offsetX - finalWidth / 2}" y="${
-          filler.offsetY - finalHeight / 2
-        }" width="${
-          (repeat === 'repeat-y' || repeat === 'no-repeat') && isPattern(filler)
-            ? (filler.source as HTMLImageElement).width
-            : finalWidth
-        }" height="${
-          (repeat === 'repeat-x' || repeat === 'no-repeat') && isPattern(filler)
-            ? (filler.source as HTMLImageElement).height
-            : finalHeight
+        `<rect transform="${additionalTransform} translate(${finalWidth / 2},${finalHeight / 2
+        })" x="${filler.offsetX - finalWidth / 2}" y="${filler.offsetY - finalHeight / 2
+        }" width="${(repeat === 'repeat-y' || repeat === 'no-repeat') && isPattern(filler)
+          ? (filler.source as HTMLImageElement).width
+          : finalWidth
+        }" height="${(repeat === 'repeat-x' || repeat === 'no-repeat') && isPattern(filler)
+          ? (filler.source as HTMLImageElement).height
+          : finalHeight
         }" fill="url(#SVGID_${filler.id})"></rect>\n`
       );
     } else {
@@ -1525,8 +1523,7 @@ export class StaticCanvas<
    * @return {String} string representation of an instance
    */
   toString() {
-    return `#<Canvas (${this.complexity()}): { objects: ${
-      this._objects.length
-    } }>`;
+    return `#<Canvas (${this.complexity()}): { objects: ${this._objects.length
+      } }>`;
   }
 }

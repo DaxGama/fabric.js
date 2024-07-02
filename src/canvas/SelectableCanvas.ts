@@ -307,16 +307,16 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
    * @private
    * @param {FabricObject} obj Object that was added
    */
-  _onObjectAdded(obj: FabricObject) {
+  _onObjectAdded(obj: FabricObject, index: number) {
     this._objectsToRender = undefined;
-    super._onObjectAdded(obj);
+    super._onObjectAdded(obj, index);
   }
 
   /**
    * @private
    * @param {FabricObject} obj Object that was removed
    */
-  _onObjectRemoved(obj: FabricObject) {
+  _onObjectRemoved(obj: FabricObject, index: number) {
     this._objectsToRender = undefined;
     // removing active object should fire "selection:cleared" events
     if (obj === this._activeObject) {
@@ -331,7 +331,7 @@ export class SelectableCanvas<EventSpec extends CanvasEvents = CanvasEvents>
       this._hoveredTarget = undefined;
       this._hoveredTargets = [];
     }
-    super._onObjectRemoved(obj);
+    super._onObjectRemoved(obj, index);
   }
 
   _onStackOrderChanged() {

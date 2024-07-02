@@ -250,6 +250,7 @@ export class Group
    * @param {FabricObject} object
    * @param {boolean} [removeParentTransform] true if object should exit group without applying group's transform to it
    */
+  // TODO: check where removeParentTransform is being used? currently, no where
   _onObjectRemoved(object: FabricObject, removeParentTransform?: boolean) {
     this.exitGroup(object, removeParentTransform);
     this.fire('object:removed', { target: object });

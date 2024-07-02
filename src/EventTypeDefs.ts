@@ -231,8 +231,8 @@ interface CanvasSelectionEvents {
 }
 
 export interface CollectionEvents {
-  'object:added': { target: FabricObject };
-  'object:removed': { target: FabricObject };
+  'object:added': { target: FabricObject, index: number };
+  'object:removed': { target: FabricObject, index: number };
 }
 
 type BeforeSuffix<T extends string> = `${T}:before`;
@@ -285,8 +285,8 @@ export interface ObjectEvents
   };
 
   // tree
-  added: { target: Group | Canvas | StaticCanvas };
-  removed: { target: Group | Canvas | StaticCanvas };
+  added: { target: Group | Canvas | StaticCanvas, index: number };
+  removed: { target: Group | Canvas | StaticCanvas, index: number };
 
   // erasing
   'erasing:end': { path: FabricObject };

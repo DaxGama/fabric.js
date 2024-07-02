@@ -11,13 +11,15 @@ import type {
 
 export interface ObjectProps
   extends SerializedObjectProps,
-    ClipPathProps,
-    ObjectTransformActionProps {
+  ClipPathProps,
+  ObjectTransformActionProps {
   clipPath?: FabricObject;
   fill: TFiller | string | null;
   stroke: TFiller | string | null;
   shadow: Shadow | null;
   canvas?: StaticCanvas | Canvas;
+
+  id: number;
 
   /**
    * Minimum allowed scale value of an object

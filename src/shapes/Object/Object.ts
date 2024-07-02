@@ -134,6 +134,7 @@ export class FabricObject<
 >
   extends AnimatableObject<EventSpec>
   implements ObjectProps {
+  declare id: number;
   declare minScaleLimit: number;
 
   declare opacity: number;
@@ -551,6 +552,7 @@ export class FabricObject<
           : null,
       object = {
         ...pick(this, propertiesToInclude as (keyof this)[]),
+        id: this.id,
         type: (this.constructor as typeof FabricObject).type,
         version: VERSION,
         originX: this.originX,

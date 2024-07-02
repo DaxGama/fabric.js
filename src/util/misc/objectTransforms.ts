@@ -56,7 +56,7 @@ export const applyTransformToObject = (
   transform: TMat2D
 ) => {
   const { translateX, translateY, scaleX, scaleY, ...otherOptions } =
-      qrDecompose(transform),
+    qrDecompose(transform),
     center = new Point(translateX, translateY);
   object.flipX = false;
   object.flipY = false;
@@ -93,6 +93,8 @@ export const saveObjectTransform = (target: FabricObject) => ({
   flipX: target.flipX,
   flipY: target.flipY,
   top: target.top,
+  width: target.width,
+  height: target.height,
 });
 
 /**
